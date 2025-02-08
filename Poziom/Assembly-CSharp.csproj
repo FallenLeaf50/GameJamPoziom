@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\InputSystem_Actions.cs" />
+    <Compile Include="Assets\Scripts\Interactions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

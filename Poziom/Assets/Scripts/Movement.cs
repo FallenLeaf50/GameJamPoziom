@@ -27,7 +27,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        UnityEngine.Cursor.visible = true;
         //_RotationX = 0;
         transform.localRotation = Quaternion.identity;
     }
@@ -59,7 +59,9 @@ public class Movement : MonoBehaviour
     {
         Vector2 move = inputSystem.Player.Move.ReadValue<Vector2>();
         Vector3 moveIn3D = new Vector3(_Speed * move.x, 0, _Speed * move.y);
-        rb.velocity = transform.TransformDirection(moveIn3D);
+        moveIn3D = transform.TransformDirection(moveIn3D);
+        moveIn3D.y = 0;
+        rb.velocity = moveIn3D;
     }
     public void OnRotate(InputAction.CallbackContext context)
     {
