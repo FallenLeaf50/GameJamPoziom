@@ -14,6 +14,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private float _MouseSensativityY;
 
     [SerializeField] private float _Speed;
+    [SerializeField] private float _TimeToCameraReset;
+    private float _CameraResetTime = 2;
+    private float _TimePassed;
+
     float _RotationX = 0.0f;
     Vector2 _LookToInput;
     Rigidbody rb;
@@ -23,16 +27,15 @@ public class Movement : MonoBehaviour
     void Start()
     {
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        _RotationX = 0;
-        transform.localRotation = Quaternion.Euler(0, 0, 0);
+        UnityEngine.Cursor.visible = false;
+        //_RotationX = 0;
+        transform.localRotation = Quaternion.identity;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         Move();
-        //Rotation();
-
     }
     private void Update()
     {
@@ -56,11 +59,13 @@ public class Movement : MonoBehaviour
     {
         Vector2 move = inputSystem.Player.Move.ReadValue<Vector2>();
         Vector3 moveIn3D = new Vector3(_Speed * move.x, 0, _Speed * move.y);
-        rb.velocity = moveIn3D;
+        rb.velocity = transform.TransformDirection(moveIn3D);
     }
     public void OnRotate(InputAction.CallbackContext context)
     {
         _LookToInput = context.ReadValue<Vector2>();
+        _TimePassed = 0;
+        StopAllCoroutines();
     }
     public void OnStopRotate(InputAction.CallbackContext context)
     {
@@ -76,5 +81,24 @@ public class Movement : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(_RotationX, 0, 0);
         Player.transform.Rotate(Vector3.up * mouseX);
+
+        _TimePassed += Time.deltaTime;
+        if(_TimePassed >= _TimeToCameraReset)
+        {
+            //transform.localRotation = Quaternion.Euler(0, 0, 0);
+            StartCoroutine(CentreCamera());
+            Debug.Log("Centre camera");
+        }
+
+    }
+    IEnumerator CentreCamera()
+    {
+        float speed =  transform.localRotation.x / _CameraResetTime;
+        while(transform.localRotation != Quaternion.Euler(0, 0, 0))
+        {
+            transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, speed);
+            yield return null;
+        }
+        
     }
 }
