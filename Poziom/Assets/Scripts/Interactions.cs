@@ -114,8 +114,6 @@ public class Interactions : MonoBehaviour
                 {
                     _ObjectLifted.transform.parent.gameObject.transform.position = new Vector3(_ObjectLifted.transform.position.x, Floor.position.y, _ObjectLifted.transform.position.z);
                     _ObjectLifted.transform.parent.gameObject.transform.SetParent(Floor);
-                    //_ObjectLifted.transform.position  = new Vector3(_ObjectLifted.transform.position.x, Floor.position.y, _ObjectLifted.transform.position.z);
-                    // _ObjectLifted.transform.SetParent(Floor);
                     _IsObjectLifted = false;
                     _ObjectLifted = null;
                 }

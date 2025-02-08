@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using FMOD.Studio;
 
 public class Movement : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class Movement : MonoBehaviour
     Vector2 _LookToInput;
     Rigidbody rb;
 
+    private EventInstance playerFootsteps;
+
 
     private Vector2 _PrevMousePos;
     void Start()
@@ -36,6 +39,7 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        UpdateSound();
     }
     private void Update()
     {
@@ -49,6 +53,8 @@ public class Movement : MonoBehaviour
         inputSystem.Enable();
         inputSystem.Player.Look.performed += OnRotate;
         inputSystem.Player.Look.canceled += OnStopRotate;
+
+        playerFootsteps = AudioManager.instance.CreateEventInstance(FMODEvents.instance.playerFootsteps);
     }
     private void OnDisable()
     {
@@ -62,6 +68,8 @@ public class Movement : MonoBehaviour
         moveIn3D = transform.TransformDirection(moveIn3D);
         moveIn3D.y = 0;
         rb.velocity = moveIn3D;
+
+        
     }
     public void OnRotate(InputAction.CallbackContext context)
     {
@@ -102,5 +110,21 @@ public class Movement : MonoBehaviour
             yield return null;
         }
         
+    }
+    private void UpdateSound()
+    {
+        if (rb.velocity != Vector3.zero)
+        {
+            PLAYBACK_STATE playbackState;
+            playerFootsteps.getPlaybackState(out playbackState);
+            if(playbackState.Equals(PLAYBACK_STATE.STOPPED))
+            {
+                playerFootsteps.start();
+            }
+        }
+        else
+        {
+            playerFootsteps.stop(STOP_MODE.ALLOWFADEOUT);
+        }
     }
 }
